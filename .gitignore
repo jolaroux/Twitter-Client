@@ -1,0 +1,5 @@
+#commented out to include the node files! For this base
+#run webpack-dev-server --content-base /dist
+#and electron main.js
+#to make it work
+#node_modules
