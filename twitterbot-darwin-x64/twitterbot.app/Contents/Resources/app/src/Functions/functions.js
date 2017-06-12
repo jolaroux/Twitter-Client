@@ -67,11 +67,13 @@ export function trimVideo (videoUrl, id,  duration, startSec, endSec, callbackSu
   var secDuration = endSec - startSec
   
   //converting to time 
-  var startSecFormat = moment.utc(startSec*1000).format('HH:mm:ss').toString()
-  var endSecFormat = moment.utc(endSec*1000).format('HH:mm:ss').toString()
+  var startSecFormat = moment.utc(startSec*1000).format('HH:mm:ss.SSS').toString()
+  var endSecFormat = moment.utc(endSec*1000).format('HH:mm:ss.SSS').toString()
+  var secDurationFormat = moment.utc(secDuration*1000).format('HH:mm:ss.SSS').toString()
   console.log("START AND END")
   console.log(startSecFormat)
   console.log(endSecFormat)
+  console.log(secDurationFormat)
   var timeRange = startSecFormat + ',' + endSecFormat
   console.log("timerange ")
   console.log(timeRange)
@@ -100,7 +102,7 @@ export function trimVideo (videoUrl, id,  duration, startSec, endSec, callbackSu
         //trimming the video
 
         
-        let commandQuery = 'ffmpeg -i \"' + tempFileName + '\" -preset ultrafast -ss ' + startSecFormat + ' -t ' + (endSec - startSec).toString() + ' -c copy \"' + newFileName + '\"  -y';
+        let commandQuery = 'ffmpeg -i \"' + tempFileName + '\" -preset ultrafast -ss ' + startSecFormat + ' -t ' + secDurationFormat + ' -c copy \"' + newFileName + '\"  -y';
           console.log("COMMAND QUERY")
           console.log(commandQuery)
     

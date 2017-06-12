@@ -25,10 +25,10 @@ function createWindow () {
   // display the index.html file
   mainWindow.loadURL(`file://${ __dirname }/src/HTML and CSS/index.html`)
   
-  if (process.env.NODE_ENV != "production") {
-      // open dev tools by default so we can see any console errors
-      mainWindow.webContents.openDevTools()
-  }
+
+  // open dev tools by default so we can see any console errors
+  mainWindow.webContents.openDevTools()
+  
 
   
   //BrowserWindow.addDevToolsExtension('/Users/jameslaroux/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/2.1.9_0')

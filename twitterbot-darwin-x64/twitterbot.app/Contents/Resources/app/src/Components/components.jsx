@@ -33,6 +33,10 @@ var download = require('download-file')
 // import React, { Component } from 'react';
 import GiphySelect from 'react-giphy-select';
 //import '../HTML and CSS/giphySelect.css';
+// import createCounterPlugin from 'draft-js-counter-plugin/lib';
+// 
+// const counterPlugin = createCounterPlugin();
+// 
 
 
 /*######  ##     ## ######## ########  #######  ##    ##
@@ -508,7 +512,14 @@ export class GifMakeDefault extends React.Component {
 
 
 //importing the emoji plugin and editor 
-import  { Editor, ContentState, EditorState } from 'draft-js'; // eslint-disable-line import/no-unresolved
+import  { ContentState, EditorState } from 'draft-js'; // eslint-disable-line import/no-unresolved
+import Editor from 'draft-js-plugins-editor';
+
+
+import createEmojiPlugin from 'draft-js-emoji-plugin';
+
+const emojiPlugin = createEmojiPlugin();
+
 
 //makes an input area with the emoji button
 export class DraftJSEmojisMake extends React.Component {
@@ -524,6 +535,7 @@ export class DraftJSEmojisMake extends React.Component {
   
 
   onChange = (editorState) => {
+    console.log("Change")
     //// console.log(editorState.getCurrentContent().getPlainText())
     this.props.handleTextChange(editorState)
     
@@ -548,7 +560,7 @@ export class DraftJSEmojisMake extends React.Component {
           <Editor
             editorState={this.state.editorState}
             onChange={this.onChange}
-            // plugins={[emojiPlugin]}
+            //plugins={[emojiPlugin]}
             className={"editorContent"}
             placeholder={this.props.placeholder}
             spellCheck={true}

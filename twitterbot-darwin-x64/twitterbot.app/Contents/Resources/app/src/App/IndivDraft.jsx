@@ -536,6 +536,9 @@ export class IndivDraftMake extends React.Component {
   handleDraftJSChange = (editorState) => {
     //getting the text 
     var text = editorState.getCurrentContent().getPlainText()
+    
+    console.log("SELECTION ")
+    console.log(editorState.getSelection().focusOffset)
 
     this.setState({textLength: text.length})
     
@@ -662,12 +665,12 @@ export class IndivDraftMake extends React.Component {
     }
     
     if (handle == 0) {
-      this.startSec = Math.round( unencoded[0] * 10 ) / 10;
+      this.startSec = Math.round( unencoded[0] * 100 ) / 100;
       document.getElementById("videoToTrim" + this.props.draft.id).currentTime = this.startSec
       // // console.log(handle)
       // // console.log(unencoded)
     } else {
-      this.endSec = Math.round( unencoded[1] * 10 ) / 10;
+      this.endSec = Math.round( unencoded[1] * 100 ) / 100;
     }
 
   } 
@@ -698,7 +701,7 @@ export class IndivDraftMake extends React.Component {
       if (!this.sliderThing.noUiSlider) {
         noUiSlider.create(this.sliderThing, {
           start: [0, this.duration],
-          step:0.10,
+          step:0.01,
           connect: true,
           behaviour: "drag",
           tooltips: [wNumb({ decimals: 2, suffix: 's' }),wNumb({ decimals: 2, suffix:'s' })],      
@@ -762,8 +765,8 @@ export class IndivDraftMake extends React.Component {
   saveTrimVideo = () => {
     this.setState({isSavingTrimmedVideo: true})
     //flooring and cieligingingignign 
-    this.startSec = Math.floor(this.startSec)
-    this.endSec = Math.ceil(this.endSec)
+    this.startSec = Math.round(this.startSec * 1000) / 1000
+    this.endSec = Math.round(this.endSec * 1000) / 1000
     
     // console.log(this.startSec)
     // console.log(this.endSec)

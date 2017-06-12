@@ -7,7 +7,7 @@
   "scripts": {
     "server": "webpack-dev-server --content-base /dist",
     "start": "electron main.js",
-    "build": "NODE_ENV=production  electron-packager . --electron-version=1.6.7 --no-prune --overwrite"
+    "build": " electron-packager . --electron-version=1.6.7 --no-prune --overwrite"
   },
   "author": "",
   "license": "ISC",
@@ -19,6 +19,7 @@
     "download": "^6.2.2",
     "download-file": "^0.1.5",
     "draft-js": "^0.10.1",
+    "draft-js-counter-plugin": "^2.0.0-beta1",
     "draft-js-emoji-plugin": "^2.0.0-rc2",
     "draft-js-hashtag-plugin": "^2.0.0-rc2",
     "draft-js-linkify-plugin": "^2.0.0-rc2",
