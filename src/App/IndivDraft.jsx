@@ -1,12 +1,13 @@
  require("../Functions/functions.js")
  import {trimVideo} from '../Functions/functions.js'
  import {ButtonMake, TabBarMake, InputBoxMake, InputAreaMake, TableMake,SelectRowWithTextBoxAndPlus,  SelectBox, IndivInputMake, DraftJSEmojisMake, GifMakeDefault} from '../Components/components.jsx'
+ //import {CustomDraft} from '../Components/CustomDraft.jsx'
 // require("./script.js")
 // 
 // require("./Store.js")
 //need to import the react stuff
-import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom'
+import React, { Component, PropTypes } from 'react'
 //clone deep
 var cloneDeep = require('lodash.clonedeep');
 //map values for object
@@ -24,6 +25,7 @@ const readChunk = require('read-chunk');
 var download = require('download-file');
 // import EmojiPicker from 'emojione-picker'
 //var EmojiPicker = require('emojione-picker');
+import { limit, substring, length, substr } from 'stringz';
 
 /*## ##    ## ########  #### ##     ##    ########  ########     ###    ######## ########
  ##  ###   ## ##     ##  ##  ##     ##    ##     ## ##     ##   ## ##   ##          ##
@@ -32,7 +34,7 @@ var download = require('download-file');
  ##  ##  #### ##     ##  ##   ##   ##     ##     ## ##   ##   ######### ##          ##
  ##  ##   ### ##     ##  ##    ## ##      ##     ## ##    ##  ##     ## ##          ##
 #### ##    ## ########  ####    ###       ########  ##     ## ##     ## ##          */
-import {sendTweet, finalizeUpload, appendUploadLoop, initUpload, getBase64AndBytesFromFile, checkTime} from '../Functions/functions.js'
+import {sendTweet, finalizeUpload, appendUploadLoop, initUpload, getBase64AndBytesFromFile, checkTime, getRegexEmojiCodeP} from '../Functions/functions.js'
 
 import Dropzone from 'react-dropzone'
 
@@ -44,6 +46,10 @@ let videoStitch = require('video-stitch');
 let shelljs = require('shelljs');
  
 let videoCut = videoStitch.cut;
+import Picker from 'react-emojipicker'
+
+
+
 
 export class IndivDraftMake extends React.Component {
   constructor(props) {
@@ -58,7 +64,7 @@ export class IndivDraftMake extends React.Component {
     
     
     
-    this.state=({canSendTweet: false, isVideo: hasVideo, showSave: false, progress: 0, isSent: null, textLength: this.props.draft.text.length, isTrimming: false, isTrimmingShowSlider: false, isTrimmingShowButton: false, isSavingTrimmedVideo: false, showLoadingForUpload: false, croppingImageUrl: "", isAddingGif: false})
+    this.state=({canSendTweet: false, isVideo: hasVideo, showSave: false, progress: 0, isSent: null, textLength: this.props.draft.text.length, isTrimming: false, isTrimmingShowSlider: false, isTrimmingShowButton: false, isSavingTrimmedVideo: false, showLoadingForUpload: false, croppingImageUrl: "", isAddingGif: false, isAddingEmoji:false})
     // isTrimming: false, isTrimmingAnimation:false, id: "", i:"", trimVideoUrl:"", loadedVideoHeight:null, loadedVideoWidth:null
     
     //keeping track of tracking 
@@ -532,19 +538,43 @@ export class IndivDraftMake extends React.Component {
     
   }
   
+  getText = (input) => {
+      var result = '';
+      if (input.length == 0)
+          return input;
+      for (var indexOfInput = 0, lengthOfInput = input.length; indexOfInput < lengthOfInput; indexOfInput++) {
+          var charAtSpecificIndex = input[indexOfInput].charCodeAt(0);
+          if (((31 <= charAtSpecificIndex) && (charAtSpecificIndex <= 126)) || charAtSpecificIndex==10) {
+              result += input[indexOfInput];
+          }
+      }
+      return result;
+  }
+  
   //handling change of draft js editor 
   handleDraftJSChange = (editorState) => {
     //getting the text 
     var text = editorState.getCurrentContent().getPlainText()
     
-    console.log("SELECTION ")
-    console.log(editorState.getSelection().focusOffset)
-
-    this.setState({textLength: text.length})
+    
+    
+    var testText = text 
+    var justText = this.getText(testText) 
+    
+  
+    var obj = getRegexEmojiCodeP(text)
+    
+    var length = obj.cp 
+    var matched = obj.matched
+    //using the emoji length instead of basic text length 
+    this.setState({textLength: length + justText.length})
     
     this.props.handleChange(text, this.props.i)
   }
   
+  handleEmojiForDraftJs = (e) => {
+    //this.props.handleChange(, this.props.i)
+  }
   
   deleteVideo = (e) => {
 
@@ -899,7 +929,21 @@ export class IndivDraftMake extends React.Component {
     this.props.saveDownloadedGif(url, this.props.i)
   }
 
+  logEmoji = (e) => {
+    console.log(e)
+    //this.focusDraft()
+    this.savedDraftInsert(e)
+  }
   
+  showEmoji = () => {
+    var toggle = this.state.isAddingEmoji
+    this.setState({isAddingEmoji: !toggle})
+  }
+  
+  saveFuncFromDJS = (func) => {
+    this.savedDraftInsert = func.insert 
+    this.focusDraft = func.focus
+  }
   
   
 /*######  ######## ##    ## ########  ######## ########
@@ -971,15 +1015,15 @@ export class IndivDraftMake extends React.Component {
     const charCounterColor = this.state.textLength < 110 ? "#3ac91d" : (this.state.textLength <130 ? "#f0e448" : (this.state.textLength < 140 ? "#fe4c4c" : "#ab0505"))
     
     //char counter 
-    const charCounter = <label style={{float: "right",backgroundColor: charCounterColor, margin:"0px 10% 0px 0px", padding:"5px", borderRadius:"5px"}}>{140 - this.state.textLength}</label>
+    const charCounter = <label style={{float: "right",backgroundColor: charCounterColor, margin:"0px 0% 0px 0px", padding:"5px", borderRadius:"5px"}}>{140 - this.state.textLength}</label>
 
     //div content editable status box 
     
   
     //the text of tweet to send but draft js 
     const statusDraftJSText = 
-    <span 
-      style={{margin:"0px 0% 0px 5%", display:"inline-block",width:"90%", float:"left"}}>
+    <div 
+      style={{ display:"inline-block",width:"85%", margin:"0px 0px 0px 2%", clear:"left"}}>
       {tweetLabel}{charCounter}
       <DraftJSEmojisMake 
         placeholder={"Enter Tweet..."} 
@@ -988,16 +1032,69 @@ export class IndivDraftMake extends React.Component {
         handleTextChange={this.handleDraftJSChange} 
         styles={this.props.styles} 
         editorStyle={this.props.styles.TextAreaFormStyleBlue} 
+        saveFunc={this.saveFuncFromDJS}
       />
-    </span>
+    </div>
     
     
-      const addGifButton = <div style={{display:"inline-block", margin:"36px 0px 0px 0px", width:"5%"}}><ButtonMake handleButtonClick={() => {
-        var toggle = this.state.isAddingGif;
-        this.setState({isAddingGif: !toggle})
-      }} value="Gif" buttonStyle={this.props.styles.AddGifButton} isSelected={false} /></div>
+    // //custom draft component 
+    // const statusDraftJSCustom = 
+    // <div 
+    //   style={{ display:"inline-block",width:"85%", margin:"0px 0px 0px 2%", clear:"left"}}>
+    //   {tweetLabel}{charCounter}
+    //   <CustomDraft
+    //     // placeholder={"Enter Tweet..."} 
+    //     // text={this.props.draft.text} 
+    //     // id={this.props.i} 
+    //     // handleTextChange={this.handleDraftJSChange} 
+    //     // styles={this.props.styles} 
+    //     // editorStyle={this.props.styles.TextAreaFormStyleBlue} 
+    //     // saveFunc={this.saveFuncFromDJS}
+    //   />
+    // </div>
     
-    const statusDraftJS = <div id="totaldraftid">{statusDraftJSText}{addGifButton}</div>
+    
+    //button to add a gif 
+      const addGifButton = 
+      <div 
+        style={{display:"inline-block", width:"5%", float:"left"}}>
+        <ButtonMake 
+          handleButtonClick={() => {
+            var toggle = this.state.isAddingGif;
+            this.setState({isAddingGif: !toggle})
+          }} 
+          value="Gif" 
+          buttonStyle={this.props.styles.AddGifButton} 
+          isSelected={false} />
+        </div>
+      
+    //button to bring up emoji 
+    const addEmojiButton = <div style={{display:"inline-block",  width:"6%", float:"right", position:"relative"}}>
+      <ButtonMake 
+        handleButtonClick={() => {
+          var toggle = this.state.isAddingEmoji;
+          this.setState({isAddingEmoji: !toggle})
+        }} 
+        value={"☺️"} 
+        buttonStyle={this.props.styles.addEmojiButton} 
+        isSelected={false} />
+      </div>
+    
+    const emojiPicker = this.state.isAddingEmoji ? 
+      <div>
+        <Picker onEmojiSelected={this.logEmoji.bind(this)} modal={true}/>
+      </div>
+      : 
+      null
+    
+    // const emojiPicker = 
+    // this.state.isAddingEmoji 
+    // ?
+    // <MyEmojiInput />
+    //   : 
+    //   null
+    
+    const statusDraftJS = <div id="totaldraftid">{addGifButton}{statusDraftJSText}{addEmojiButton}</div>
       
 /*     ## #### ########  ########  #######
 ##     ##  ##  ##     ## ##       ##     ##
@@ -1182,7 +1279,7 @@ export class IndivDraftMake extends React.Component {
       imagePreviews.push(tempImage)
     }
     const imageDiv = imagePreviews.length != 0 ? 
-      <div style={{height:"175px", display:"inline-block", margin:"10px 0px 10px 0px"}}>{imagePreviews}</div>
+      <div style={{height:"175px", display:"inline-block", margin:"10px 0px 10px 0px", width:"100%", textAlign:"center"}}>{imagePreviews}</div>
       :
       null  
       
@@ -1207,7 +1304,7 @@ export class IndivDraftMake extends React.Component {
       gifPreview = tempImage
     }
     const gifDiv = gifPreview != null ? 
-      <div style={{height:"175px", display:"inline-block", margin:"10px 0px 10px 0px"}}>{gifPreview}</div>
+      <div style={{height:"175px", display:"inline-block", margin:"10px 0px 10px 0px", width:"100%", textAlign:"center"}}>{gifPreview}</div>
       :
       null
     
@@ -1215,14 +1312,14 @@ export class IndivDraftMake extends React.Component {
     
     //the images and videos div 
     //the label
-    const mediaLabel = <div><label style={{margin:"0px 0px 0px 5%"}}>Media</label></div>
+    const mediaLabel = <div><label style={{margin:"0px 0px 0px 7%"}}>Media</label></div>
   //the div
     const mediaDiv = (videoPreview != null || gifPreview != null || imagePreviews.length != 0) ?
-      <div id="mediadiv"  >{mediaLabel}<div style={{overflow:"auto", whiteSpace: "nowrap"}}>{gifDiv}{imageDiv}</div></div>
+      <div id="mediadiv"  >{mediaLabel}<div style={{overflow:"auto", whiteSpace: "nowrap", width:"100%", textAlign:"center" }}>{gifDiv}{imageDiv}</div></div>
       :
       null
       
-    //
+    //style={{width:"100%", textAlign:"center"}}
                   
     //the style of the whole div, alternating between left and right 
     var styleVal={backgroundColor:bColor, borderRadius:"10px", width:"92%", margin:"2% 2% 2% 2%", display:"inline-block", border: "0.01px solid #657786", overflow:"hidden", verticalAlign: "top"}  
@@ -1304,12 +1401,14 @@ var animateClass = this.state.isTrimmingAnimation ?   " animatedCustom foldOutRi
       <div style={styleVal}>
       {xButton}{topLeftButton}{tweetButton}
       <div>{statusDraftJS}</div>
+      {/* <div>{statusDraftJSCustom}</div> */}
       <div>{mediaDiv}{videoDiv}</div>
       <div>{cropImageDiv}</div>
       {/* {this.trimModal} */}
       {/* <div>
         <GifMakeDefault />
       </div> */}
+      <div style={{position:"absolute", margin:"-100px 30% 0px 30%", zIndex:"50"}}>{emojiPicker}</div>
       <div>{giphyBrowse}</div>
       </div>
       

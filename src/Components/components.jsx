@@ -7,7 +7,7 @@
  ######   #######  ##     ## ##         #######  ##    ## ######## ##    ##    ##     ####*/
  
  require("../Functions/functions.js")
- import {trimVideo} from '../Functions/functions.js'
+ import {trimVideo, getRegexEmojiCodeP} from '../Functions/functions.js'
 // require("./script.js")
 // 
 // require("./Store.js")
@@ -37,6 +37,7 @@ import GiphySelect from 'react-giphy-select';
 // 
 // const counterPlugin = createCounterPlugin();
 // 
+const emojiRegex = require('emoji-regex');
 
 
 /*######  ##     ## ######## ########  #######  ##    ##
@@ -512,62 +513,118 @@ export class GifMakeDefault extends React.Component {
 
 
 //importing the emoji plugin and editor 
-import  { ContentState, EditorState } from 'draft-js'; // eslint-disable-line import/no-unresolved
+import  {  ContentState, EditorState, Modifier, SelectionState, CompositeDecorator, FocusKey } from 'draft-js'; // eslint-disable-line import/no-unresolved
+
 import Editor from 'draft-js-plugins-editor';
+//import 'draft-js-mention-plugin/lib/plugin.css';
+//import createMentionPlugin from 'draft-js-mention-plugin';
+// const mentionPlugin = createMentionPlugin({ mentions });
 
-
-import createEmojiPlugin from 'draft-js-emoji-plugin';
-
-const emojiPlugin = createEmojiPlugin();
+var utf8 = require('utf8');
 
 
 //makes an input area with the emoji button
 export class DraftJSEmojisMake extends React.Component {
   constructor (props) {
     super(props)
+  
     
     var cont = ContentState.createFromText(this.props.text)
+    
+    this.props.handleTextChange(EditorState.createWithContent(cont)); 
     this.state = {
       editorState: EditorState.createWithContent(cont),
     };
+    
+  }
+
+  onChange = (editorState) => {
+    this.props.handleTextChange(editorState); 
+    
+    this.setState({editorState})
   }
 
   
 
-  onChange = (editorState) => {
-    console.log("Change")
-    //// console.log(editorState.getCurrentContent().getPlainText())
-    this.props.handleTextChange(editorState)
-    
-    
-    // const contentState = ContentState.createFromText(text);
-    // const NewEditorState = EditorState.push(this.state.editorState, contentState);
-    // this.setState({ editorState });  
+  focus = () => {
+    this.editor.focus();
+  };
   
-    this.setState({
-      editorState: editorState
-    });
+  
+  showEmoji = () => {
+    
+  }
+  
+  insertEmoji = (emoji) => {
+    //this.focus()
+    console.log("INSERT EMOJI")
+    console.log(emoji)
+    
+    var eS = this.state.editorState
+    var eSC = eS.getCurrentContent()
+    var eSCT = eS.getSelection()
+    console.log("CURRENT CONTENT")
+    console.log(eS.getCurrentContent())
+    
+    //inserting text 
+    var cont = Modifier.insertText(
+      eSC,
+      eSCT,
+      emoji.unicode
+    )
+    
+    //new editorState with the old one and the new content state merged 
+    var editorState = EditorState.push(eS, cont, "insert-characters" )
+    
+    //new state with the selection? 
+    //var editorState = EditorState.forceSelection(editorState, eSCT)
+    
+    
+    
+    this.onChange(editorState)
+  }
+  
+  componentDidMount = () => {
+    this.props.saveFunc({insert: this.insertEmoji, focus:this.focus})
+  }
+  
+  getSelectedBlockElement = () => {
+    var selection = window.getSelection()
+    if (selection.rangeCount == 0) return null
+    var node = selection.getRangeAt(0).startContainer
+    do {
+      if (node.getAttribute && node.getAttribute('data-block') == 'true')
+        return node
+      node = node.parentNode
+    } while (node != null)
+    return null
   };
 
-  // focus = () => {
-  //   this.editor.focus();
-  // };
-
   render() {
+    
+
+    
+    
     return (
       <span >
+        <meta charset="utf-8" />
         <span style={this.props.editorStyle} >
+          <meta charset="utf-8" />
           <Editor
             editorState={this.state.editorState}
             onChange={this.onChange}
-            //plugins={[emojiPlugin]}
+            //handleBeforeInput={this.handleBeforeInput}
+            plugins={[]}
             className={"editorContent"}
             placeholder={this.props.placeholder}
             spellCheck={true}
             readOnly={false}
+            onClick={this.focus}
             ref={(element) => { this.editor = element; }}
           />
         </span>
+            
+            
         {/* <div className={"options"}>
           <EmojiSuggestions />
           <EmojiSelect />

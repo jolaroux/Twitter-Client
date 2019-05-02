@@ -17,8 +17,9 @@ import {FollowersView} from './FollowersView.jsx'
 import {DraftSaverView} from './DraftSaverView.jsx'
 import {MassDMView} from './MassDMView.jsx'
 import {MassUnfollowView} from './MassUnfollowView.jsx'
-import {Test} from './Test.jsx'
 import {VideoDownloader} from './VideoDownloaderView.jsx'
+import {Test} from './Test.jsx'
+import {Test2} from './Test2.jsx'
 
 
 
@@ -58,6 +59,9 @@ class DisplayPage extends React.Component {
         break;
       case 'Test':
         return <Test styles={this.props.styles} />
+        break;
+      case 'Test2':
+        return <Test2 styles={this.props.styles} />
         break;
       case 'Video Downloader':
         return  <VideoDownloader styles={this.props.styles} />
@@ -104,7 +108,7 @@ class App extends React.Component {
     
     //the array of options that the tab bar will display
     //var TABBAROPTIONS = ['Settings', 'Tweet Tracker/Auto DM', 'Get all followers', 'Draft Saver', 'Mass DM', 'Mass Unfollow', 'Test']
-    var TABBAROPTIONS = ['Settings', 'Tweet Tracker/Auto DM', 'Get all followers', 'Draft Saver', 'Video Downloader']
+    var TABBAROPTIONS = ['Settings', 'Tweet Tracker/Auto DM', 'Get all followers', 'Draft Saver', 'Video Downloader', 'Test2']
     
     
     //need to generate the tabs and the page content for each tab

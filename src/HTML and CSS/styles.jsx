@@ -534,11 +534,33 @@ export var Styles = {
       selected: "#3ac91d",
       borderRadius: "3px",
       display:"inline-block",
-      float:"right",
       padding: "0px 12px 0px 12px",
       //padding:"0px 0px 0px 0px",
-      //marginTop:"8px"
-      marginRight:"-5px"
+      marginTop:"38px",
+      marginLeft:"-5px"
+    },
+    addEmojiButton: { 
+      backgroundColor: "#e6e6e6",
+      border: "0.01px solid #657786",
+      outline: "none",
+      cursor: "pointer",
+      //width: "5%",
+      //width:"6%", 
+      overflow: "hidden",
+      verticalAlign: "top",
+      textAlign: "center",
+      height: "40px",
+      transition: "0.3s",
+      hover: "#657786",
+      selected: "#3ac91d",
+      borderRadius: "3px",
+
+      padding: "0px 12px 12px 12px",
+      //padding:"0px 0px 0px 0px",
+      marginTop:"38px",
+      position:"absolute",
+      right:"-5px",
+      fontSize:"25px"
     },
     
   
@@ -591,10 +613,10 @@ export var Styles = {
     backgroundColor: "#f6f6f6"
   },
   TextAreaFormStyleBlue: {
-    width: "90%",
+    width: "100%",
     //height: "8%",
     padding: "12px 12px 12px 12px",
-    margin: "8px 0px",
+    margin: "8px 0px 8px 0px",
     display: "inline-block",
     border: "0.01px solid #657786",
     borderRadius: "4px",

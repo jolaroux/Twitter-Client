@@ -11,7 +11,7 @@ import { getFriends} from '../Functions/script.js'
 //importing components
 import {ButtonMake, TabBarMake, InputBoxMake, InputAreaMake, TableMake,SelectRowWithTextBoxAndPlus, IndivDraftMake, SelectBox, IndivInputMake} from '../Components/components.jsx'
 
-import {getFromStore, registerTwitter, registerStore, showLoadDialog, showSaveDialog, saveInStore, exportData, loadData, checkAllTextInputFields} from '../Functions/functions.js'
+import {getFromStore, registerTwitter, registerStore, showLoadDialog, showSaveDialog, saveInStore, exportData, loadData, checkAllTextInputFields, sendTweet} from '../Functions/functions.js'
 
 var fs = require('fs')
 var os = require('os')
@@ -177,6 +177,43 @@ export class Test extends React.Component {
   }
   
   
+  test4 = () => {
+    //console.log(twemoji.convert.toCodePoint('\ud83c\udde8\ud83c\uddf3'));
+    fs.writeFileSync(os.homedir() + '/Desktop/fuckemoji.txt', "asdf🏳️‍🌈🏳️‍🌈🏳️‍🌈🏳️‍🌈🏳️‍🌈🏳️‍🌈🏳️‍🌈🏳️‍🌈🏳️‍🌈🏳️‍🌈🏳️‍🌈🏳️‍🌈🏳️‍🌈🏳️‍🌈🏳️‍🌈🏳️‍🌈🏳️‍🌈🏳️‍🌈🏳️‍🌈🏳️‍🌈🏳️‍🌈🏳️‍🌈🏳️‍🌈🏳️‍🌈🏳️‍🌈🏳️‍🌈🏳️‍🌈🏳️‍🌈🏳️‍🌈🏳️‍🌈🏳️‍🌈🏳️‍🌈🏳️‍🌈f",  "utf8")
+  }
+  
+  test5 = () => {
+    //sendTweet(status, mediaIds, callbackSuccess, callbackError) {
+    sendTweet(fs.readFileSync(os.homedir() + '/Desktop/fuckemoji.txt'), null, () => {
+      console.log("SUCCESS")
+    },
+    () => {
+      console.log("error")
+    })
+  }
+  
+  test6 = () => {
+    
+    // Note: because the regular expression has the global flag set, this module
+    // exports a function that returns the regex rather than exporting the regular
+    // expression itself, to make it impossible to (accidentally) mutate the
+    // original regular expression.
+
+    const text = `
+  ⌚
+🏳️‍🌈
+👩
+👩🏿
+    `;
+
+    
+    let match;
+    while (match = regex.exec(text)) {
+      const emoji = match[0];
+      console.log(`Matched sequence ${ emoji } — code points: ${ [...emoji].length }`);
+    }
+  }
+  
   
 
   render() {
@@ -184,7 +221,7 @@ export class Test extends React.Component {
     
     
     
-    const video = <video   width="30%"  controls>
+    const video = <video  width="30%"  controls>
         <source src={this.state.video + '#t=3,5'} type="video/mp4"/>
       </video>
     
@@ -193,12 +230,18 @@ export class Test extends React.Component {
     const test = <ButtonMake handleButtonClick={this.followAll} value="FOLLOW ALL" buttonStyle={this.props.styles.SaveButtonStyle} isSelected={false} />
     const test2 = <ButtonMake handleButtonClick={this.unFollowAll} value="UNFOLLOW ALL" buttonStyle={this.props.styles.SaveButtonStyle} isSelected={false} />
     const test3 = <div><ButtonMake handleButtonClick={this.randomTest} value="test download" buttonStyle={this.props.styles.SaveButtonStyle} isSelected={false} /></div>
+    const test4 = <div><ButtonMake handleButtonClick={this.test4} value="test " buttonStyle={this.props.styles.SaveButtonStyle} isSelected={false} /></div>
+    
+    const test5 = <div><ButtonMake handleButtonClick={this.test5} value="test tweet" buttonStyle={this.props.styles.SaveButtonStyle} isSelected={false} /></div>
+    
+    const test6 = <div><ButtonMake handleButtonClick={this.test6} value="test emoji " buttonStyle={this.props.styles.SaveButtonStyle} isSelected={false} /></div>
     
     return (
       <div>
         {/* {test}
         {test2} */}
-        {test3}
+        
+        {test6}
     </div>
     )
   }

@@ -31,6 +31,7 @@ let shelljs = require('shelljs');
 
 var FileReader = require('filereader')
 var fileReader = new FileReader()
+const emojiRegex = require('emoji-regex');
 
 
 
@@ -43,6 +44,28 @@ var fileReader = new FileReader()
 ##       ##     ## ##   ### ##    ##    ##     ##  ##     ## ##   ### ##    ##
 ##        #######  ##    ##  ######     ##    ####  #######  ##    ##  ####*/
 
+
+//get value of regex emoji 
+export function getRegexEmojiCodeP (str) {
+  const regex = emojiRegex();
+  
+  var totalCodePoints = 0 
+  var emojis = []
+  let match;
+  while (match = regex.exec(str)) {
+    const emoji = match[0];
+    totalCodePoints +=  [...emoji].length
+    emojis.push([...emoji])
+    //console.log(`Matched sequence ${ emoji } — code points: ${ [...emoji].length }`);
+  }
+  
+  
+  console.log("TOTAL CODE POINTS IS ")
+  console.log(totalCodePoints)
+  // console.log("MATCHED EMOJIS ARE")
+  // console.log(emojis)
+  return ({cp: totalCodePoints, matched: emojis})
+}
 
 //trimming a video 
 export function trimVideo (videoUrl, id,  duration, startSec, endSec, callbackSuccess, callbackError) {
@@ -344,11 +367,23 @@ export function checkTime(mediaID, callbackSuccess, callbackError) {
 
 
 //send a tweet function 
-export function sendTweet(status, mediaIds, callbackSuccess, callbackError) {
+export function sendTweet(statusUnenc, mediaIds, callbackSuccess, callbackError) {
   
   //register 
   registerStore()
   registerTwitter()
+  
+  console.log("old status is ")
+  console.log(typeof statusUnenc)
+  console.log(statusUnenc.length)
+  
+  
+  fs.writeFileSync(os.homedir() + '/Desktop/Bot/temptweet.txt', statusUnenc, 'utf8')
+  
+  var status = fs.readFileSync( os.homedir() + '/Desktop/Bot/temptweet.txt', 'utf8')
+  console.log("new status before sending is ")
+  console.log(status)
+  console.log(status.length)
   
   
   //sending the tweet
