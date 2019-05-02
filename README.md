@@ -1,7 +1,7 @@
 This is a Twitter client that enables pro-level features normally hidden behind paid services. 
 
 Written in ReactJS and Node, and runs on Electron.
-Also has Webpack integrated and Webpack-Dev-Server for easier dev. 
+Also has Babel, Webpack, Webpack-Dev-Server for easier dev. 
 
 This software enables:
 - Auto Direct Messages 
